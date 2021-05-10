@@ -1,57 +1,65 @@
 const path = require("path");
 const os = require("os");
-const { app, BrowserWindow, Menu, ipcMain, shell } = require("electron");
-const log = require("electron-log");
+const { app, BrowserWindow, Menu, ipcMain, shell, Tray } = require("electron");
+const log = require("electron-log"); // use this if cpu overloads and time
+const Store = require("./Store");
+const MainWindow = require("./MainWindow");
+const AboutWindow = require("./AboutWindow");
+const AppTray = require("./AppTray");
 
 // Set env
-process.env.NODE_ENV = "development";
-
+process.env.NODE_ENV = "production";
 const isMac = process.platform === "darwin" ? true : false;
 const isWin = process.platform === "win32" ? true : false;
 const isDev = process.env.NODE_ENV !== "production" ? true : false;
 
 let mainWindow;
 let aboutWindow;
+let tray = null;
+
+// Init store & defaults
+const store = new Store({
+  configName: "user-settings",
+  defaults: {
+    settings: {
+      cpuOverload: 80,
+      memOverload: 80,
+      alertFrequency: 5,
+    },
+  },
+});
 
 function createMainWindow() {
-  mainWindow = new BrowserWindow({
-    title: "YOUR APP NAME",
-    width: isDev ? 800 : 500,
-    height: 600,
-    icon: `./app/icons/icon.png`,
-    resizable: isDev ? true : false,
-    backgroundColor: "white",
-    webPreferences: {
-      nodeIntegration: true,
-      contextIsolation: false,
-    },
-  });
-
-  if (isDev) {
-    mainWindow.webContents.openDevTools();
-  }
-
-  // mainWindow.loadURL("https://twitter.com");
-  mainWindow.loadFile("./app/index.html");
+  mainWindow = new MainWindow("./app/index.html", isDev);
 }
 
 // About page
 function createAboutWindow() {
-  aboutWindow = new BrowserWindow({
-    title: "About YOUR APP NAME",
-    width: 300,
-    height: 300,
-    icon: "./app/icons/icon.png",
-    resizable: false,
-    backgroundColor: "white",
-  });
-  aboutWindow.loadFile("./app/about.html");
+  aboutWindow = new AboutWindow("./app/about.html");
 }
 
 app.on("ready", () => {
   createMainWindow();
+
+  // when dom is ready we read the data from store.json
+  mainWindow.webContents.on("dom-ready", () => {
+    mainWindow.webContents.send("settings:get", store.get("settings"));
+  });
+
   const mainMenu = Menu.buildFromTemplate(menu);
   Menu.setApplicationMenu(mainMenu);
+
+  mainWindow.on("close", (e) => {
+    if (!app.isQuitting) {
+      e.preventDefault();
+      mainWindow.hide();
+    }
+    return true;
+  });
+
+  // Create tray
+  const icon = path.join(__dirname, "app", "icons", "tray_icon.png");
+  tray = new AppTray(icon, mainWindow);
 
   mainWindow.on("ready", () => (mainWindow = null));
 });
@@ -73,6 +81,16 @@ const menu = [
     : []),
   {
     role: "fileMenu",
+  },
+  {
+    // menu for all platform
+    label: "View",
+    submenu: [
+      {
+        label: "Toggle Navigaion",
+        click: () => mainWindow.webContents.send("nav:toggle"),
+      },
+    ],
   },
   ...(isWin
     ? [
@@ -109,6 +127,12 @@ const menu = [
       ]
     : []),
 ];
+
+// Set settings
+ipcMain.on("settings:set", (e, value) => {
+  store.set("settings", value);
+  mainWindow.webContents.send("settings:get", store.get("settings"));
+});
 
 app.on("window-all-closed", () => {
   if (!isMac) {
