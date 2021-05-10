@@ -14,5 +14,9 @@
 
 # To build
 
-    - npm i -D electron-packager
-    - npm run package-win
+    * Windows:
+        - npm run package-win
+     * Mac:
+        - npm run package-mac
+     * Linux:
+        - npm run package-linux
