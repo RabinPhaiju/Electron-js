@@ -20,3 +20,14 @@
         - npm run package-mac
      * Linux:
         - npm run package-linux
+
+# Electron React:
+    - my_style: (electron-react-starter)
+	- npx create-react-app [app_name]
+	- npm install electron concurrently wait-on cross-env
+	- npm run electron:serve
+
+    - brad-simple electron react
+    - create-react-app -> not recommended
+    - electron forge
+    - electron-react-boilerplate
