@@ -65,7 +65,6 @@ async function sendLogs() {
     const res = await fetch('http://localhost:3004/logs')
     const data = await res.json()
     mainWindow.webContents.send('log:get', data)
-    console.log('uiuiuiuiiui')
   } catch (err) {
     console.log(err)
   }
