@@ -1,7 +1,6 @@
 const path = require('path')
-const { app, BrowserWindow, ipcMain } = require('electron')
-
-require('@electron/remote/main').initialize()
+const { app, BrowserWindow, ipcMain, Menu } = require('electron')
+const fetch = require('node-fetch')
 
 process.env.NODE_ENV = 'production'
 // process.env.NODE_ENV = 'development'
@@ -19,9 +18,10 @@ function createWindow() {
     backgroundColor: 'white',
     icon: './public/logo192.png',
     webPreferences: {
-      nodeIntegration: false,
-      enableRemoteModule: true,
+      nodeIntegration: true,
+      contextIsolation: false,
       preload: __dirname + '/preload.js'
+      // enableRemoteModule: true
     }
   })
   mainWindow.loadURL(
@@ -55,20 +55,88 @@ function createWindow() {
   })
 }
 
-app.on('ready', createWindow)
+app.on('ready', () => {
+  createWindow()
+  const mainMenu = Menu.buildFromTemplate(menu)
+  Menu.setApplicationMenu(mainMenu)
+})
+
+//menu
+const menu = [
+  ...(isMac ? [{ role: 'appMenu' }] : []),
+  {
+    role: 'fileMenu'
+  },
+  {
+    role: 'editMenu'
+  },
+  {
+    label: 'Logs',
+    submenu: [
+      {
+        label: 'Clear Logs'
+        // click: () => clearLogs()
+      }
+    ]
+  },
+  ...(isDev
+    ? [
+        {
+          label: 'Developer',
+          submenu: [
+            { role: 'reload' },
+            { role: 'forcereload' },
+            { type: 'separator' },
+            { role: 'toggledevtools' }
+          ]
+        }
+      ]
+    : [])
+]
 
 //load from api
-ipcMain.on('logs:load', sendLogs)
-
-async function sendLogs() {
+ipcMain.on('logs:load', async () => {
   try {
     const res = await fetch('http://localhost:3004/logs')
     const data = await res.json()
-    mainWindow.webContents.send('log:get', data)
+    mainWindow.webContents.send('logs:get', data)
   } catch (err) {
     console.log(err)
   }
-}
+})
+ipcMain.on('users:load', async () => {
+  try {
+    const res = await fetch('http://localhost:3004/users')
+    const data = await res.json()
+    mainWindow.webContents.send('users:get', data)
+  } catch (err) {
+    console.log(err)
+  }
+})
+ipcMain.on('logs:delete', async (e, id) => {
+  try {
+    await fetch(`http://localhost:3004/logs/${id}`, {
+      method: 'DELETE'
+    })
+    mainWindow.webContents.send('logs:deleted')
+  } catch (err) {
+    console.log(err)
+  }
+})
+ipcMain.on('logs:add', async (e, log) => {
+  try {
+    await fetch('http://localhost:3004/logs', {
+      method: 'POST',
+      headers: {
+        'Content-type': 'application/json'
+      },
+      body: JSON.stringify(log)
+    })
+    mainWindow.webContents.send('logs:added')
+  } catch (err) {
+    console.log(err)
+  }
+})
 
 // QUit when all windows are closed.
 app.on('window-all-closed', function () {

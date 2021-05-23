@@ -1,25 +1,11 @@
 {
   "logs": [
     {
-      "id": 7610,
-      "text": "dsf",
-      "priority": "low",
-      "user": "sdf",
-      "created": "Sun May 23 2021 11:39:14 GMT+0545 (Nepal Time)"
-    },
-    {
-      "id": 2626,
-      "text": "fsdf",
+      "id": 6892,
+      "text": "React Electron IPC",
       "priority": "modearte",
-      "user": "sdf",
-      "created": "Sun May 23 2021 15:51:21 GMT+0545 (Nepal Time)"
-    },
-    {
-      "id": 2747,
-      "text": "xvxc",
-      "priority": "high",
-      "user": "xzc",
-      "created": "Sun May 23 2021 16:18:10 GMT+0545 (Nepal Time)"
+      "user": "Rabin",
+      "created": "Sun May 23 2021 19:55:21 GMT+0545 (Nepal Time)"
     }
   ],
   "users": [
