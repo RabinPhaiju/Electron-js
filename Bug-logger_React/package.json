@@ -1,7 +1,7 @@
 {
-  "name": "electron-react-app",
+  "name": "buglogger",
   "version": "0.1.0",
-  "description": "Electron React Starter",
+  "description": "Bug Logger",
   "author": "Rabin Phaiju",
   "private": true,
   "devDependencies": {
@@ -14,10 +14,16 @@
     "@testing-library/jest-dom": "^5.12.0",
     "@testing-library/react": "^11.2.7",
     "@testing-library/user-event": "^12.8.3",
+    "bootstrap": "^5.0.1",
     "concurrently": "^6.1.0",
     "cross-env": "^7.0.3",
+    "json-server": "^0.16.3",
+    "moment": "^2.29.1",
     "react": "^17.0.2",
+    "react-bootstrap": "^1.6.0",
     "react-dom": "^17.0.2",
+    "react-moment": "^1.1.1",
+    "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.3",
     "wait-on": "^5.3.0",
     "web-vitals": "^1.1.2"
@@ -29,11 +35,12 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
+    "json-server": "json-server --watch db.json --port 3004",
     "electron:serve": "concurrently -k \"cross-env BROWSER=none npm start\" \"npm run electron:start\" ",
     "electron:build": "npm run build && electron-builder -c.extraMetadata.main=build/main.js",
     "electron:start": "wait-on tcp:3000 && electron .",
     "package-mac": "electron-packager . --overwrite --platform=darwin --arch=x64 --icon=public/icons/mac/icon.icns --prune=true --out=release-builds",
-    "package-win": "electron-packager . --overwrite --platform=win32 --arch=ia32 --icon=public/icons/win/icon.ico --prune=false --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"React Electron Starter App\"",
+    "package-win": "electron-packager . --overwrite --platform=win32 --arch=ia32 --icon=public/icons/win/icon.ico --prune=false --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"Bug Logger\"",
     "package-linux": "electron-packager . --overwrite --platform=linux --arch=x64 --icon=public/icons/png/1024x1024.png --prune=false --out=release-builds"
   },
   "build": {

@@ -1,0 +1,18 @@
+{
+  "logs": [
+    {
+      "id": 7610,
+      "text": "dsf",
+      "priority": "low",
+      "user": "sdf",
+      "created": "Sun May 23 2021 11:39:14 GMT+0545 (Nepal Time)"
+    }
+  ],
+  "users": [
+    {
+      "id": 1,
+      "username": "rbnph",
+      "user": "Rabin"
+    }
+  ]
+}
