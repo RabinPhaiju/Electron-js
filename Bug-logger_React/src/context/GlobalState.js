@@ -1,6 +1,6 @@
 import React, { createContext, useReducer, useEffect, useState } from "react";
 import AppReducer from "./AppReducer";
-import { ipcRenderer } from "electron";
+// import { ipcRenderer } from "electron";
 
 // Initial state
 const initialState = {
@@ -21,6 +21,13 @@ export const GlobalProvider = ({ children }) => {
   });
 
   useEffect(() => {
+    const getLogs = async () => {
+      const usersJson = await fetchLogs();
+      dispatch({
+        type: "FETCH_LOG",
+        payload: usersJson,
+      });
+    };
     const getUsers = async () => {
       const usersJson = await fetchUsers();
       dispatch({
@@ -28,21 +35,22 @@ export const GlobalProvider = ({ children }) => {
         payload: usersJson,
       });
     };
+    getLogs();
     getUsers();
-    ipcRenderer.send("logs:load");
-    ipcRenderer.on("logs:get", (e, logs) => {
-      dispatch({
-        type: "FETCH_LOG",
-        payload: logs,
-      });
-    });
+    // ipcRenderer.send("logs:load");
+    // ipcRenderer.on("logs:get", (e, logs) => {
+    //   dispatch({
+    //     type: "FETCH_LOG",
+    //     payload: logs,
+    //   });
+    // });
   }, []);
 
-  // const fetchLogs = async () => {
-  //   const res = await fetch("http://localhost:3004/logs");
-  //   const data = await res.json();
-  //   return data;
-  // };
+  const fetchLogs = async () => {
+    const res = await fetch("http://localhost:3004/logs");
+    const data = await res.json();
+    return data;
+  };
   const fetchUsers = async () => {
     const res = await fetch("http://localhost:3004/users");
     const data = await res.json();
