@@ -1,0 +1,30 @@
+.leftMenu{
+  height: 100vh;
+  background-color: #272c36;
+  padding: 2px 2px;
+  transition: 0.4s;
+}
+.itemtop{
+  display: flex;
+  padding: 2px 8px;
+  align-items: center;
+  background-color: #383838;
+}
+
+.itemtop span{
+  color: rgb(255, 255, 255);
+  /* margin-left: 80px; */
+
+}
+.itemlist{
+  display: flex;
+  flex-direction: column;
+  padding: 2px 8px;
+  background-color: #383838;
+}
+.itemlist .item{
+  display: flex;
+  font-size: 16px;
+  color: white;
+  text-decoration: none;
+}
